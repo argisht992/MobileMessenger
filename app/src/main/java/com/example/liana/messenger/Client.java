@@ -9,23 +9,19 @@ public class Client extends AsyncTask<String, Void, Void> {
 
     private User pair = null;
 
-    public Client(String username)
-    {
+    public Client(String username) {
 
     }
 
-    public void connectWith()
-    {
+    public void connectWith() {
 
     }
 
-    public void sendMessage(String message)
-    {
+    public void sendMessage(String message) {
 
     }
 
-    public void disConnect()
-    {
+    public void disConnect() {
 
     }
 
