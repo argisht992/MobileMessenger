@@ -19,6 +19,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     public MainClient mainClient = null;
     private FragmentManager fm = null;
     public ArrayAdapter<String> adapter = null;
+    public Map<String,User> onlineUsersMap = null;
     ArrayList<String> onlineUserslist = null;
 
 
@@ -38,6 +39,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
         } else {
             fragmentTransaction.replace(R.id.fragment_container, loginFragment).commit();
         }
+
     }
 
     @Override
@@ -59,6 +61,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
                     usersListFragment = new UsersListFragment();
                     fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container,usersListFragment).commit();
+                    new MessagingServer().execute();
                 }
 
             }
@@ -79,13 +82,13 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     @Override
     public void dataReceiver(Map<String, User> map) {
 
-        // adapter.map = map
+        onlineUsersMap = map;
         onlineUserslist = new ArrayList<String>(map.keySet());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                adapter.clear();
                 adapter.addAll(onlineUserslist);
-                // adapter.notifyDataSetChanged();
             }
         });
 
@@ -97,5 +100,9 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     @Override
     public void UpdateUserList() {
 
+    }
+
+    public Map<String,User> getOnlineUsersMap() {
+        return onlineUsersMap;
     }
 }

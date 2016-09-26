@@ -1,5 +1,6 @@
 package com.example.liana.messenger;
 
+import android.os.Binder;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Created by student on 9/19/16.
@@ -49,13 +51,14 @@ public class UsersListFragment extends Fragment implements ListView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //ChatFragment.userText = ((TextView)view).getText().toString();
+        String uName = ((TextView)view).getText().toString();
 
-        ChatWindow chatWindow = new ChatWindow();
+        ChatFragment chatFragment = new ChatFragment();
+        chatFragment.setUser(activity.getOnlineUsersMap().get(uName));
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.addToBackStack(null);
-        transaction.replace(R.id.fragment_container, chatWindow).commit();
+        transaction.replace(R.id.fragment_container, chatFragment).commit();
         //Toast.makeText(UsersListFragment.this, String.valueOf(id), Toast.LENGTH_SHORT).show();
     }
 

@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -23,17 +22,15 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
     public static final int PORT = 12345;
     public static final String ip = "192.168.68.120";
     public Socket clientSocket = null;
-    private Timer updaterTimer = null;
+    private Thread updaterThread = null;
     private PrintWriter writer= null;
     private BufferedReader reader= null;
     private ResultListener lst = null;
     private DataUpdateListener ulst = null;
 
     public MainClient(Context context) {
-     //   onlineUsers = new HashMap();
         this.lst = (ResultListener)context;
         this.ulst = (DataUpdateListener)context;
-        //ResultListener lst,DataUpdateListener utls
     }
 
     public void connect() {
@@ -41,7 +38,6 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
             clientSocket = new Socket(InetAddress.getByName(ip),PORT);
         } catch (IOException e) {
             e.printStackTrace();
-            //handle exception
         }
     }
 
@@ -132,7 +128,6 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
     public Map<String,User> setMap(String str) {
         int f1 = 0, f2;
         String ip, userName;
-        Log.d("user",str);
         Map<String,User> map = new HashMap<>();
         while(true) {
             f2 = str.indexOf(";", f1);
@@ -140,11 +135,9 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
                 break;
             }
             ip = str.substring(f1, f2);
-            Log.d("user",ip);
             f2 += 1;
             f1 = str.indexOf("\n", f2);
             userName = str.substring(f2, f1);
-            Log.d("user",userName);
             f1 += 1;
             map.put(userName,new User(userName,ip,null));
         }
@@ -152,11 +145,10 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
     }
 
     public void startUpdateTimer() {
-        updaterTimer = new Timer();
-        updaterTimer.schedule(new TimerTask() {
+        updaterThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (updaterTimer != null) {
+                while (updaterThread != null) {
                     try {
                         ulst.dataReceiver(getOnlines());
                         Thread.sleep(5000);
@@ -165,14 +157,14 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
                     }
                 }
             }
-        },5000);
+        });
+        updaterThread.start();
     }
 
     public void interruptUpdateTimer() {
-        if (updaterTimer != null) {
-            Log.d("MYLOG", "Interrupt from func");
-            updaterTimer.cancel();
-            updaterTimer = null;
+        if (updaterThread != null) {
+            //updaterThread.cancel();
+            updaterThread = null;
         }
     }
     @Override
