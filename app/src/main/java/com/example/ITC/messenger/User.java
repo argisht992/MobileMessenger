@@ -1,6 +1,4 @@
-package com.example.liana.messenger;
-
-import android.util.Log;
+package com.example.ITC.messenger;
 
 import java.net.InetAddress;
 import java.net.Socket;

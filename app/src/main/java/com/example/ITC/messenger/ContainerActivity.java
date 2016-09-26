@@ -1,4 +1,4 @@
-package com.example.liana.messenger;
+package com.example.ITC.messenger;
 
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ContainerActivity extends FragmentActivity implements ResultListener, DataUpdateListener{
+public class ContainerActivity extends FragmentActivity implements ResultListener, DataUpdateListener {
     private FragmentTransaction fragmentTransaction = null;
     private Fragment loginFragment = null;
     private Fragment usersListFragment = null;
@@ -62,6 +62,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
                     fragmentTransaction = fm.beginTransaction();
                     fragmentTransaction.replace(R.id.fragment_container,usersListFragment).commit();
                     new MessagingServer().execute();
+                    //create DB
                 }
 
             }

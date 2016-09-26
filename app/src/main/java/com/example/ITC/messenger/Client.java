@@ -1,4 +1,4 @@
-package com.example.liana.messenger;
+package com.example.ITC.messenger;
 
 import android.os.AsyncTask;
 

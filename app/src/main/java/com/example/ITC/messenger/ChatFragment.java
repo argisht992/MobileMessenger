@@ -1,10 +1,9 @@
-package com.example.liana.messenger;
+package com.example.ITC.messenger;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,24 +13,18 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 
 /**
  * Created by student on 9/19/16.
  */
-public class ChatFragment extends Fragment implements MessageListener, View.OnClickListener{
+public class ChatFragment extends Fragment implements View.OnClickListener{
     private TextView userName = null;
     private EditText editText = null;
     private Button sendButton = null;
     private User user = null;
     private Socket pairSocket = null;
     private PrintWriter writer = null;
-
-
-    public void setUser (User user) {
-        this.user = user;
-    }
 
     @Override
     public void onStart() {
@@ -64,19 +57,13 @@ public class ChatFragment extends Fragment implements MessageListener, View.OnCl
     }
 
     @Override
-    public void updateMessageWindow(String str) {
-
-    }
-
-    @Override
-    public void instantUpdateWindow(String str) {
-
-    }
-
-    @Override
     public void onClick(View v) {
         writer.write(editText.getText().toString());
         writer.flush();
+    }
+
+    public void setUser (User user) {
+        this.user = user;
     }
 
 

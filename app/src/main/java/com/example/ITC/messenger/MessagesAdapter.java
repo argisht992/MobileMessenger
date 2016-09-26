@@ -1,4 +1,4 @@
-package com.example.liana.messenger;
+package com.example.ITC.messenger;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;

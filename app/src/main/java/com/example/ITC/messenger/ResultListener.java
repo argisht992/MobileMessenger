@@ -1,4 +1,4 @@
-package com.example.liana.messenger;
+package com.example.ITC.messenger;
 
 /**
  * Created by student on 9/20/16.
