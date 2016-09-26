@@ -16,8 +16,6 @@ import java.util.Map;
  * Created by student on 9/20/16.
  */
 public class MainClient  extends AsyncTask<String, Void , Void> {
-    public static final int PORT = 12345;
-    public static final String ip = "192.168.68.120";
     public Socket clientSocket = null;
     private Thread updaterThread = null;
     private PrintWriter writer= null;
@@ -32,7 +30,7 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
 
     public void connect() {
         try {
-            clientSocket = new Socket(InetAddress.getByName(ip),PORT);
+            clientSocket = new Socket(InetAddress.getByName(ConstansContainer.SERVER_URL),ConstansContainer.SOCKET_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }

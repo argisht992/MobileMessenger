@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.2"
 
     defaultConfig {
-        applicationId "com.example.liana.messenger"
+        applicationId "com.example.ITC.messenger"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1

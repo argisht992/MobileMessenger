@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,14 +17,13 @@ import java.util.ArrayList;
  */
 public class MessagingServer extends AsyncTask <Void,Void,Void>{
     ServerSocket serverSocket = null;
-    private ArrayList<User> talkerList;
     private BufferedReader reader = null;
     char []buf;
 
     public void startServer() {
         //Start server and calling receiveMessage for receiving messages
         try {
-            serverSocket = new ServerSocket(12345);
+            serverSocket = new ServerSocket(ConstansContainer.SOCKET_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,11 +38,12 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
 
     @Override
     protected Void doInBackground(Void... params) {
-        Log.d("message", "do in bacground");
         startServer();
         while (serverSocket !=null) {
             try {
-                Socket socket = serverSocket.accept();
+                 final Socket socket = serverSocket.accept();
+                String ip = socket.getInetAddress().toString();
+                Log.d("llll",ip);
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 new Thread(new Runnable() {
                     @Override
@@ -51,8 +52,9 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
                             buf = new char[1024];
                             while (true) {
                                 reader.read(buf);
-                                Log.d("message", new String(buf));
-                                receiveMessage(new String(buf));
+                                Log.d("Privet",socket.getInetAddress().toString());
+                                Log.d("message",String.valueOf(buf));
+                                receiveMessage(String.valueOf(buf));
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

@@ -1,9 +1,11 @@
 package com.example.ITC.messenger;
 
+import java.io.Serializable;
+
 /**
  * Created by student on 9/20/16.
  */
-public class MessageModel {
+public class MessageModel implements Serializable {
 
     private String time = null;
     private String message = null;

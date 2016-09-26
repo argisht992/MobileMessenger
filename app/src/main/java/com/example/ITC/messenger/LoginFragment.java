@@ -1,5 +1,6 @@
 package com.example.ITC.messenger;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -37,8 +38,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         username = (EditText)view.findViewById(R.id.et_username);
         password = (EditText)view.findViewById(R.id.et_password);
         activity = (ContainerActivity)getActivity();
-        onClick(loginButton);
+       // onClick(loginButton);
         return view;
+        //TODO add error messages.
     }
 
     @Override
@@ -46,7 +48,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.btn_login:
                 //  mainClient.setCaller();
-                activity.mainClient.execute("login", username.getText().toString(),
+                //activity.mainClient.execute("login", username.getText().toString(),
+                //        password.getText().toString());
+                activity.mainClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                        "login", username.getText().toString(),
                         password.getText().toString());
                 break;
             case R.id.btn_register:

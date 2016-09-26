@@ -1,11 +1,13 @@
 package com.example.ITC.messenger;
 
+import android.os.AsyncTask;
 import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.style.EasyEditSpan;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -29,15 +31,18 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
         setContentView(R.layout.container);
         mainClient = new MainClient(this);
         loginFragment = new LoginFragment();
-        adapter = new ArrayAdapter<String>(ContainerActivity.this,android.R.layout.simple_list_item_1);
+        adapter = new ArrayAdapter<String>(ContainerActivity.this,
+                android.R.layout.simple_list_item_1);
         fm = getSupportFragmentManager();
         Fragment lastFragment = fm.findFragmentById(R.id.fragment_container);
         fragmentTransaction = fm.beginTransaction();
 
         if (lastFragment != null) {
-            fragmentTransaction.replace(R.id.fragment_container,lastFragment).commit();
+            fragmentTransaction.replace(R.id.fragment_container,lastFragment);
+            fragmentTransaction.commit();
         } else {
-            fragmentTransaction.replace(R.id.fragment_container, loginFragment).commit();
+            fragmentTransaction.replace(R.id.fragment_container, loginFragment);
+            fragmentTransaction.commit();
         }
 
     }
@@ -60,8 +65,9 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
                 if (isSuccess) {
                     usersListFragment = new UsersListFragment();
                     fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container,usersListFragment).commit();
-                    new MessagingServer().execute();
+                    fragmentTransaction.replace(R.id.fragment_container,usersListFragment);
+                    fragmentTransaction.commit();
+                    new MessagingServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     //create DB
                 }
 

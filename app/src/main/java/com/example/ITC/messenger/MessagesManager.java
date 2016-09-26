@@ -11,6 +11,7 @@ public class MessagesManager {
     private MessageListener fragmentListener = null;
     private DataBaseHelper DBHelper = null;
     private SQLiteDatabase db = null;
+
     public MessagesManager(Context context,String uName) {
         fragmentListener = (MessageListener) context;
         DBHelper = new DataBaseHelper(context,uName);

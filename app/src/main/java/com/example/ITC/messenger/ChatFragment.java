@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -22,27 +25,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener{
     private TextView userName = null;
     private EditText editText = null;
     private Button sendButton = null;
+    private Client client = null;
     private User user = null;
-    private Socket pairSocket = null;
-    private PrintWriter writer = null;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //new ConnectToChatPair().execute();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    pairSocket = new Socket(user.getIp(),12345);
-                    writer = new PrintWriter(pairSocket.getOutputStream());
-                } catch (IOException e) {
-                    //show error message
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+
 
     @Nullable
     @Override
@@ -53,33 +39,23 @@ public class ChatFragment extends Fragment implements View.OnClickListener{
         sendButton = (Button) view.findViewById(R.id.btn_send);
         sendButton.setOnClickListener(this);
         userName.setText(user.getUsername());
+        client = new Client(user);
+        client.execute();
         return view;
     }
 
     @Override
     public void onClick(View v) {
-        writer.write(editText.getText().toString());
-        writer.flush();
+        client.sendMessage(editText.getText().toString());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        client.disConnect();
     }
 
     public void setUser (User user) {
         this.user = user;
     }
-
-
-    class ConnectToChatPair extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                pairSocket = new Socket(user.getIp(),12345);
-                writer = new PrintWriter(pairSocket.getOutputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-    }
-
 }
