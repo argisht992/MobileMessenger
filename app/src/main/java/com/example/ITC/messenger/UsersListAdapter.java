@@ -23,11 +23,9 @@ import java.util.Map;
 public class UsersListAdapter extends ArrayAdapter<String> {
     private LayoutInflater inflater = null;
     private ArrayList<User> onlineUsers;
-//    private Map<String,View> map = null;
 
     public UsersListAdapter(Context context) {
         super(context, R.layout.users_item);
-//        map = new HashMap<>();
         onlineUsers = new ArrayList<>();
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -37,15 +35,10 @@ public class UsersListAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.users_item,null,false);
         User currentUser = onlineUsers.get(position);
-
         ((TextView) view.findViewById(R.id.online_user_name)).setText(currentUser.getUsername());
         if (currentUser.hasNewMessage) {
             view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_dark));
-
         }
-//        map.put(userNames.get(position),view);
-
-
         return view;
     }
 
@@ -83,7 +76,6 @@ public class UsersListAdapter extends ArrayAdapter<String> {
             }
         }
     }
-//        map.get(u).setBackgroundColor(Color.parseColor("#FF4081"));
 
     public String getUserName(int posintion) {
         if (onlineUsers == null) {

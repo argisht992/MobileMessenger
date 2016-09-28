@@ -34,10 +34,6 @@ public class MessagesManager {
         return list;
     }
 
-    public void readCurrentMessage(MessageListener msglst)
-    {
-        //fragmentListener.instantUpdateWindow();
-    }
 
     public synchronized MessageModel addNewMessage(String msg, String userName,int sendByMe) {
         Calendar c = Calendar.getInstance();

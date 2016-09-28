@@ -38,8 +38,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
-
-    //add MessageModel in table
     public void insertData(MessageModel message, SQLiteDatabase db) {
         cv.put("pair",message.getPair());
         cv.put("msg",message.getMessage());
@@ -75,9 +73,5 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return this.getWritableDatabase();
     }
 
-    /*public MessageModel readLastData() {
-        //mutable
-        return new MessageModel();
-    }*/
 }
 

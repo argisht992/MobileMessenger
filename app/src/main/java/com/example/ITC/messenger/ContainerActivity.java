@@ -104,10 +104,6 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
 
     }
 
-    @Override
-    public void UpdateUserList() {
-    }
-
     public Map<String,User> getOnlineUsersMap() {
         return onlineUsersMap;
     }
@@ -143,6 +139,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     @Override
     protected void onStop() {
         super.onStop();
+        mainClient.disconnect();
     }
 
     public Fragment getCurrentFragment() {

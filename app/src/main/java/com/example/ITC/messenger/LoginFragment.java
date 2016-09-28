@@ -38,18 +38,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         username = (EditText)view.findViewById(R.id.et_username);
         password = (EditText)view.findViewById(R.id.et_password);
         activity = (ContainerActivity)getActivity();
-        //onClick(loginButton);
         return view;
-        //TODO add error messages.
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
-                //  mainClient.setCaller();
-                //activity.mainClient.execute("login", username.getText().toString(),
-                //        password.getText().toString());
                 activity.mainClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
                         "login", username.getText().toString(),
                         password.getText().toString());

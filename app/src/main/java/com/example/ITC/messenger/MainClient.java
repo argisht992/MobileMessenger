@@ -42,7 +42,6 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-            //handle exception
         }
     }
 
@@ -158,7 +157,6 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
 
     public void interruptUpdateTimer() {
         if (updaterThread != null) {
-            //updaterThread.cancel();
             updaterThread = null;
         }
     }

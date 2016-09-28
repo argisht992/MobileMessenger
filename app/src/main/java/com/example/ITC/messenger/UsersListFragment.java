@@ -16,9 +16,6 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by student on 9/19/16.
- */
 public class UsersListFragment extends Fragment implements ListView.OnItemClickListener {
     private ContainerActivity activity = null;
 
