@@ -47,10 +47,19 @@ public class UsersListFragment extends Fragment implements ListView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String uName = ((TextView)view).getText().toString();
+        String uName = activity.adapter.getUserName(position);
         ChatFragment chatFragment = new ChatFragment();
         chatFragment.setUser(activity.getOnlineUsersMap().get(uName));
         ((ContainerActivity) getActivity()).fragmentTransaction(chatFragment);
+    }
+
+    public void changeColor(final String pairName) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.adapter.changeColor(pairName);
+            }
+        });
     }
 
 }

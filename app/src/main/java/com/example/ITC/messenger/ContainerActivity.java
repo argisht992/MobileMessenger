@@ -19,13 +19,12 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     private Fragment loginFragment = null;
     public MainClient mainClient = null;
     private FragmentManager fm = null;
-    public ArrayAdapter<String> adapter = null;
+    public UsersListAdapter adapter = null;
     public Map<String,User> onlineUsersMap = null;
     ArrayList<String> onlineUserslist = null;
     private MessagesManager messagesManager = null;
     private String loginedUserName = null;
     ///
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +32,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
         setContentView(R.layout.container);
         mainClient = new MainClient(this);
         loginFragment = new LoginFragment();
-        adapter = new ArrayAdapter<String>(ContainerActivity.this,
-                android.R.layout.simple_list_item_1);
+        adapter = new UsersListAdapter(ContainerActivity.this);
         fm = getSupportFragmentManager();
         Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -91,6 +89,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     public void dataReceiver(Map<String, User> map) {
 
         onlineUsersMap = map;
+        onlineUsersMap.remove(loginedUserName);
         onlineUserslist = new ArrayList<String>(map.keySet());
         runOnUiThread(new Runnable() {
             @Override
@@ -107,7 +106,6 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
 
     @Override
     public void UpdateUserList() {
-
     }
 
     public Map<String,User> getOnlineUsersMap() {
@@ -115,7 +113,7 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     }
 
 
-    void fragmentTransaction(Fragment endPoint) {
+    public void fragmentTransaction(Fragment endPoint) {
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, endPoint);
         if (endPoint instanceof ChatFragment) {
@@ -145,5 +143,9 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    public Fragment getCurrentFragment() {
+        return fm.findFragmentById(R.id.fragment_container);
     }
 }

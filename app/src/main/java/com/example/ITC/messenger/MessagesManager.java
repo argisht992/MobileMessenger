@@ -3,6 +3,7 @@ package com.example.ITC.messenger;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,11 +24,14 @@ public class MessagesManager {
         this.db = dbHelper.openDB();
     }
 
-    public void readAllMessages(String pairName)
+    public ArrayList<MessageModel> readAllMessages(String pairName)
     {
-     //   MessageModel []a = dbHelper.readAllData(db,pairName);
-        int t ;
-        t=1;
+        MessageModel []a = dbHelper.readAllData(pairName);
+        ArrayList<MessageModel> list = new ArrayList<>();
+        for (int i = 0; i < a.length; ++i) {
+            list.add(a[i]);
+        }
+        return list;
     }
 
     public void readCurrentMessage(MessageListener msglst)
@@ -35,11 +39,12 @@ public class MessagesManager {
         //fragmentListener.instantUpdateWindow();
     }
 
-    public synchronized void addNewMessage(String msg, String userName,int sendByMe) {
+    public synchronized MessageModel addNewMessage(String msg, String userName,int sendByMe) {
         Calendar c = Calendar.getInstance();
         Date date = c.getTime();
         MessageModel m = new MessageModel(userName,msg,date.toString(),sendByMe);
         dbHelper.insertData(m,db);
+        return m;
     }
 
     public void closeDb() {

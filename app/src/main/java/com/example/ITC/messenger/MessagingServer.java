@@ -41,8 +41,13 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
     public synchronized void receiveMessage(String message, String ip) {
         String userName = activity.getUserNameByIp(ip);
         activity.getMessagesManager().openDB();
-        activity.getMessagesManager().addNewMessage(message,userName,0);
+        MessageModel m = activity.getMessagesManager().addNewMessage(message,userName,0);
         activity.getMessagesManager().closeDb();
+        if (activity.getCurrentFragment() instanceof ChatFragment) {
+            ((ChatFragment)activity.getCurrentFragment()).updateAdapter(m);
+        } else {
+            ((UsersListFragment)activity.getCurrentFragment()).changeColor(m.getPair());
+        }
     }
 
     private synchronized char[] bzero(char[] buf) {

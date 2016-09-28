@@ -11,6 +11,7 @@ public class User {
 
     private String username = null;
     private String ip = null;
+    public boolean hasNewMessage = false;
     private Socket uSocket = null;
     public User (String username,String ip, Socket uSocket) {
         this.username = username;
@@ -35,7 +36,6 @@ public class User {
     }
 
     private String ntoa(long raw) {
-       // byte[] b = new byte[] {(byte)(raw >> 24), (byte)(raw >> 16), (byte)(raw >> 8), (byte)raw};
         byte[] b = new byte[] {(byte)raw,  (byte)(raw >> 8),(byte)(raw >> 16), (byte)(raw >> 24)};
         try {
             return InetAddress.getByAddress(b).getHostAddress();

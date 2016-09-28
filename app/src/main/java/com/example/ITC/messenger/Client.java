@@ -13,15 +13,21 @@ public class Client extends AsyncTask<String, Void, Void> {
     private Socket pairSocket = null;
     private PrintWriter writer = null;
     private User user = null;
+    private ContainerActivity activity = null;
 
-    public Client(User user) {
+    public Client(User user, ContainerActivity activity) {
         this.user = user;
+        this.activity = activity;
     }
-
 
     public void sendMessage(String message) {
         writer.write(message);
         writer.flush();
+        activity.getMessagesManager().openDB();
+        MessageModel m = activity.getMessagesManager().addNewMessage(message,user.getUsername(),1);
+        //TODO
+        ((ChatFragment)activity.getCurrentFragment()).updateAdapter(m);
+        activity.getMessagesManager().closeDb();
     }
 
     public void disConnect() {

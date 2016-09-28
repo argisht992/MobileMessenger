@@ -42,15 +42,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //add MessageModel in table
     public void insertData(MessageModel message, SQLiteDatabase db) {
         cv.put("pair",message.getPair());
-       // cv.put("msg",message.getMessage());
-        cv.put("msg","PRIVET");
+        cv.put("msg",message.getMessage());
         cv.put("time", message.getTime());
         cv.put("sendByMe",message.getSentByMe());
         db.insert(tableName,null,cv);
     }
 
-    public MessageModel[] readAllData(SQLiteDatabase db,String pair1) {
+    public MessageModel[] readAllData(String pair1) {
         String []pairName = new String[]{ pair1 };
+        SQLiteDatabase db = openDB();
         Cursor c = db.query(tableName,null,"pair = ?",pairName,null,null,null,null);
         MessageModel []messages = new MessageModel[c.getCount()];
         if(c.moveToFirst()) {
@@ -65,12 +65,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                }
            }
         }
+        closeDb();
         return messages;
     }
     public void closeDb() {
         this.close();
     }
-    public SQLiteDatabase openDB() {
+    public synchronized SQLiteDatabase openDB() {
         return this.getWritableDatabase();
     }
 
