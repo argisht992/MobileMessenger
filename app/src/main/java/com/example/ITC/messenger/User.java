@@ -26,6 +26,10 @@ public class User {
         return InetAddress.getByName(ntoa(Long.parseLong(ip)));
     }
 
+    public String getStringIp() {
+        return ntoa(Long.parseLong(ip));
+    }
+
     public Socket getuSocket() {
         return this.uSocket;
     }

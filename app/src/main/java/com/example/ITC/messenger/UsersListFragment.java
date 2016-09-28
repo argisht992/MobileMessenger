@@ -27,9 +27,6 @@ public class UsersListFragment extends Fragment implements ListView.OnItemClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_users_list, container, false);
         activity = (ContainerActivity)getActivity();
-
-
-
         ListView usersList = (ListView)view.findViewById(R.id.lw_user_list);
         usersList.setAdapter(activity.adapter);
         usersList.setOnItemClickListener(this);
@@ -53,10 +50,7 @@ public class UsersListFragment extends Fragment implements ListView.OnItemClickL
         String uName = ((TextView)view).getText().toString();
         ChatFragment chatFragment = new ChatFragment();
         chatFragment.setUser(activity.getOnlineUsersMap().get(uName));
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.addToBackStack(null);
-        transaction.replace(R.id.fragment_container, chatFragment).commit();
+        ((ContainerActivity) getActivity()).fragmentTransaction(chatFragment);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.ITC.messenger;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -19,6 +20,12 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
     ServerSocket serverSocket = null;
     private BufferedReader reader = null;
     char []buf;
+    private ContainerActivity activity = null;
+
+    public MessagingServer(Activity activity) {
+        this.activity = (ContainerActivity) activity;
+
+    }
 
     public void startServer() {
         //Start server and calling receiveMessage for receiving messages
@@ -31,8 +38,18 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
     public void stopServer() {
         //Stop receiving messages
     }
-    public synchronized void receiveMessage(String message) {
-        Log.d("message", "1111"+message);
+    public synchronized void receiveMessage(String message, String ip) {
+        String userName = activity.getUserNameByIp(ip);
+        activity.getMessagesManager().openDB();
+        activity.getMessagesManager().addNewMessage(message,userName,0);
+        activity.getMessagesManager().closeDb();
+    }
+
+    private synchronized char[] bzero(char[] buf) {
+        for(int i = 0; i < buf.length; ++i) {
+            buf[i] = 0;
+        }
+        return buf;
     }
 
 
@@ -52,9 +69,8 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
                             buf = new char[1024];
                             while (true) {
                                 reader.read(buf);
-                                Log.d("Privet",socket.getInetAddress().toString());
-                                Log.d("message",String.valueOf(buf));
-                                receiveMessage(String.valueOf(buf));
+                                receiveMessage(String.valueOf(buf),socket.getInetAddress().toString());
+                                buf = bzero(buf);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

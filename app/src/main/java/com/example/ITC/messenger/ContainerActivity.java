@@ -11,18 +11,20 @@ import android.text.style.EasyEditSpan;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class ContainerActivity extends FragmentActivity implements ResultListener, DataUpdateListener {
-    private FragmentTransaction fragmentTransaction = null;
     private Fragment loginFragment = null;
-    private Fragment usersListFragment = null;
     public MainClient mainClient = null;
     private FragmentManager fm = null;
     public ArrayAdapter<String> adapter = null;
     public Map<String,User> onlineUsersMap = null;
     ArrayList<String> onlineUserslist = null;
+    private MessagesManager messagesManager = null;
+    private String loginedUserName = null;
+    ///
 
 
     @Override
@@ -34,11 +36,11 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
         adapter = new ArrayAdapter<String>(ContainerActivity.this,
                 android.R.layout.simple_list_item_1);
         fm = getSupportFragmentManager();
-        Fragment lastFragment = fm.findFragmentById(R.id.fragment_container);
-        fragmentTransaction = fm.beginTransaction();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
 
-        if (lastFragment != null) {
-            fragmentTransaction.replace(R.id.fragment_container,lastFragment);
+        if (currentFragment != null) {
+            fragmentTransaction.replace(R.id.fragment_container,currentFragment);
             fragmentTransaction.commit();
         } else {
             fragmentTransaction.replace(R.id.fragment_container, loginFragment);
@@ -63,12 +65,11 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
             @Override
             public void run() {
                 if (isSuccess) {
-                    usersListFragment = new UsersListFragment();
-                    fragmentTransaction = fm.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container,usersListFragment);
-                    fragmentTransaction.commit();
-                    new MessagingServer().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    Fragment usersListFragment = new UsersListFragment();
+                    fragmentTransaction(usersListFragment);
+                    new MessagingServer(ContainerActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     //create DB
+                    messagesManager = new MessagesManager(ContainerActivity.this,loginedUserName);
                 }
 
             }
@@ -111,5 +112,38 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
 
     public Map<String,User> getOnlineUsersMap() {
         return onlineUsersMap;
+    }
+
+
+    void fragmentTransaction(Fragment endPoint) {
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, endPoint);
+        if (endPoint instanceof ChatFragment) {
+            fragmentTransaction.addToBackStack(null);
+        } else if (endPoint instanceof UsersListFragment) {
+            loginedUserName = ((LoginFragment)loginFragment).getCurrentUserName();
+        }
+        fragmentTransaction.commit();
+        fm.executePendingTransactions();
+    }
+
+    public synchronized String getUserNameByIp(String ip) {
+        for (User us : onlineUsersMap.values()) {
+            String tmp = us.getStringIp();
+                if (ip.contains(tmp)) {
+                    return us.getUsername();
+                }
+
+        }
+        return null;
+    }
+
+    public synchronized MessagesManager getMessagesManager() {
+        return this.messagesManager;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 }

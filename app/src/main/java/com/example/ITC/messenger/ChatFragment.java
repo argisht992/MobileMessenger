@@ -27,6 +27,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener{
     private Button sendButton = null;
     private Client client = null;
     private User user = null;
+    private ContainerActivity activity = null;
 
 
 
@@ -41,6 +42,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener{
         userName.setText(user.getUsername());
         client = new Client(user);
         client.execute();
+        /////////////////////////
+        activity =(ContainerActivity) getActivity();
+        activity.getMessagesManager().readAllMessages(user.getUsername());
         return view;
     }
 
@@ -57,5 +61,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener{
 
     public void setUser (User user) {
         this.user = user;
+    }
+
+    public void setTextView(String s) {
+        this.userName.setText(s);
     }
 }

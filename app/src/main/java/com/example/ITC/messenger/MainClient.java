@@ -36,7 +36,7 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
         }
     }
 
-    public void disConnect()
+    public void disconnect()
     {
         try {
             clientSocket.close();

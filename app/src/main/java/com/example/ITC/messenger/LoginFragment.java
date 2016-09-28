@@ -38,7 +38,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         username = (EditText)view.findViewById(R.id.et_username);
         password = (EditText)view.findViewById(R.id.et_password);
         activity = (ContainerActivity)getActivity();
-       // onClick(loginButton);
+        //onClick(loginButton);
         return view;
         //TODO add error messages.
     }
@@ -59,6 +59,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                         password.getText().toString());
                 break;
         }
+    }
+
+    public String getCurrentUserName() {
+        return username.getText().toString();
     }
 
 }

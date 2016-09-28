@@ -9,11 +9,11 @@ public class MessageModel implements Serializable {
 
     private String time = null;
     private String message = null;
-    private String from = null;
+    private String pair = null;
     private int sentByMe = -1;
 
-    public MessageModel(String from, String message, String time, int sentByMe) {
-        this.from = from;
+    public MessageModel(String pair, String message, String time, int sentByMe) {
+        this.pair = pair;
         this.message = message;
         this.time = time;
         this.sentByMe = sentByMe;
@@ -27,8 +27,8 @@ public class MessageModel implements Serializable {
         return this.message;
     }
 
-    public String getFrom() {
-        return this.from;
+    public String getPair() {
+        return this.pair;
     }
 
     public int getSentByMe() {
