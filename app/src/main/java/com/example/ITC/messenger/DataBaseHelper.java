@@ -21,7 +21,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
-        db.execSQL("create table if not exists " + tableName +
+        db.execSQL("create table if not exists " + String.valueOf(tableName) +
                 " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "pair TEXT, " +
                 "msg TEXT, " +

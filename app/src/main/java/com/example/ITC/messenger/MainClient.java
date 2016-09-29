@@ -2,6 +2,7 @@ package com.example.ITC.messenger;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Created by student on 9/20/16.
  */
-public class MainClient  extends AsyncTask<String, Void , Void> {
+public class MainClient extends AsyncTask<String, Void , Void> {
     public Socket clientSocket = null;
     private Thread updaterThread = null;
     private PrintWriter writer= null;
@@ -62,8 +63,8 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
             e.printStackTrace();
             return false;
         }
-        catch (NullPointerException e1) {
-            e1.printStackTrace();
+        catch (NullPointerException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -71,14 +72,16 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
     public boolean register(String uName, String password)
     {
 
-        char[] bufer = new char[1024];
+        char[] buffer = new char[1024];
         connect();
         try {
             writer = new PrintWriter(clientSocket.getOutputStream());
             writer.write("registration?" + uName + ";" + password);
+            writer.flush();
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            reader.read(bufer);
-            return bufer.toString().contains("YES");
+            reader.read(buffer);
+            String buf = new String(buffer);
+            return buf.contains("YES");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,13 +89,14 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
         }
     }
 
-    public boolean logout()
+    public boolean logout(String userName)
     {
         char[] buffer = new char[1024];
         connect();
         try {
             writer = new PrintWriter(clientSocket.getOutputStream());
-            writer.write("logout?");
+            writer.write("logout?" + userName);
+            writer.flush();
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             reader.read(buffer);
             return buffer.toString().contains("YES");
@@ -160,6 +164,7 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
             updaterThread = null;
         }
     }
+    static int a = 0;
     @Override
     protected Void doInBackground(String... params) {
         switch (params[0]) {
@@ -168,14 +173,14 @@ public class MainClient  extends AsyncTask<String, Void , Void> {
                 lst.onResultLogin(loginResult);
                 break;
             case "registration":
+                a++;
                 lst.onResultRegister(register(params[1], params[2]));
                 break;
             case "logout":
-                lst.onLogout(logout());
+                lst.onLogout(logout(params[1]));
                 break;
         }
         return null;
     }
-
 
 }

@@ -28,7 +28,6 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
     }
 
     public void startServer() {
-        //Start server and calling receiveMessage for receiving messages
         try {
             serverSocket = new ServerSocket(ConstansContainer.SOCKET_PORT);
         } catch (IOException e) {
@@ -44,38 +43,29 @@ public class MessagingServer extends AsyncTask <Void,Void,Void>{
         MessageModel m = activity.getMessagesManager().addNewMessage(message,userName,0);
         activity.getMessagesManager().closeDb();
         if (activity.getCurrentFragment() instanceof ChatFragment) {
+
             ((ChatFragment)activity.getCurrentFragment()).updateAdapter(m);
         } else {
             ((UsersListFragment)activity.getCurrentFragment()).changeColor(m.getPair());
         }
     }
 
-    private synchronized char[] bzero(char[] buf) {
-        for(int i = 0; i < buf.length; ++i) {
-            buf[i] = 0;
-        }
-        return buf;
-    }
-
-
     @Override
     protected Void doInBackground(Void... params) {
         startServer();
         while (serverSocket !=null) {
             try {
-                 final Socket socket = serverSocket.accept();
+                final Socket socket = serverSocket.accept();
                 String ip = socket.getInetAddress().toString();
-                Log.d("llll",ip);
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            buf = new char[1024];
                             while (true) {
+                                buf = new char[1024];
                                 reader.read(buf);
                                 receiveMessage(String.valueOf(buf),socket.getInetAddress().toString());
-                                buf = bzero(buf);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

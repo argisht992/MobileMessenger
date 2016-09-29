@@ -58,5 +58,4 @@ public class UsersListFragment extends Fragment implements ListView.OnItemClickL
             }
         });
     }
-
 }

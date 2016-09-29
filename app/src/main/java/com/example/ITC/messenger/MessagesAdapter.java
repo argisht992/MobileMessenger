@@ -35,21 +35,15 @@ public class MessagesAdapter extends ArrayAdapter<MessageModel>{
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.message_item,null,false);
         TextView tv = (TextView) view.findViewById(R.id.message_textView);
-        tv.setText((array.get(position)).getMessage() /*+ "\n" + (array.get(position)).getTime()*/);
-        tv.setTextSize(25);
-
-
+        tv.setText((array.get(position)).getMessage());
         if((array.get(position)).getSentByMe() == 1) {
             tv.setTextColor(view.getResources().getColor(R.color.background_out_text_color));
-            tv.setBackgroundColor(view.getResources().getColor(R.color.background_out));
-            //tv.setGravity(Gravity.RIGHT);
-
-
+            tv.setBackgroundResource(R.drawable.messages_style_out);
+            ((LinearLayout)view).setGravity(Gravity.RIGHT);
         } else {
-
             tv.setTextColor(view.getResources().getColor(R.color.background_in_text_color));
-            tv.setBackgroundColor(view.getResources().getColor(R.color.background_in));
-            //tv.setGravity(Gravity.LEFT);
+            tv.setBackgroundResource(R.drawable.messages_style_in);
+            ((LinearLayout)view).setGravity(Gravity.LEFT);
         }
         return view;
     }

@@ -1,6 +1,7 @@
 package com.example.ITC.messenger;
 
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,18 +22,23 @@ public class Client extends AsyncTask<String, Void, Void> {
     }
 
     public void sendMessage(String message) {
-        writer.write(message);
-        writer.flush();
-        activity.getMessagesManager().openDB();
-        MessageModel m = activity.getMessagesManager().addNewMessage(message,user.getUsername(),1);
-        //TODO
-        ((ChatFragment)activity.getCurrentFragment()).updateAdapter(m);
-        activity.getMessagesManager().closeDb();
+       if(writer != null && pairSocket != null) {
+           writer.write(message);
+           writer.flush();
+           activity.getMessagesManager().openDB();
+           MessageModel m = activity.getMessagesManager().addNewMessage(message, user.getUsername(), 1);
+           ((ChatFragment) activity.getCurrentFragment()).updateAdapter(m);
+           activity.getMessagesManager().closeDb();
+       } else {
+           Toast.makeText(activity, user.getUsername() + " is offline", Toast.LENGTH_SHORT).show();
+       }
     }
 
     public void disConnect() {
         try {
-            pairSocket.close();
+            if(pairSocket != null) {
+                pairSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

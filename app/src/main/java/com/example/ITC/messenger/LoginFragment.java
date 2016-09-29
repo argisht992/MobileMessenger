@@ -1,5 +1,6 @@
 package com.example.ITC.messenger;
 
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Created by argishti on 9/22/16.
@@ -20,6 +22,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     private EditText username = null;
     private EditText password = null;
     private ContainerActivity activity = null;
+    public EditText confirmPasswordEditText = null;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         regButton.setOnClickListener(this);
         username = (EditText)view.findViewById(R.id.et_username);
         password = (EditText)view.findViewById(R.id.et_password);
+        confirmPasswordEditText = (EditText) view.findViewById(R.id.confirm_password);
         activity = (ContainerActivity)getActivity();
         return view;
     }
@@ -45,15 +50,36 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
-                activity.mainClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                        "login", username.getText().toString(),
-                        password.getText().toString());
+                try {
+                    runMainClient("login");
+                } catch (IllegalStateException e) {
+                    activity.mainClient =  new MainClient(activity);
+                    runMainClient("login");
+                }
                 break;
             case R.id.btn_register:
-                activity.mainClient.execute("registration", username.getText().toString(),
-                        password.getText().toString());
+                if (confirmPasswordEditText.getVisibility() == View.GONE) {
+                   confirmPasswordEditText.setVisibility(View.VISIBLE);
+                } else {
+                    if (password.getText().toString().equals(confirmPasswordEditText.getText().toString())) {
+                        try {
+                            runMainClient("registration");
+                        } catch (IllegalStateException e) {
+                            activity.mainClient =  new MainClient(activity);
+                            runMainClient("registration");
+                        }
+                    } else {
+                        activity.invalidCommand("Your passwords do not match");
+                    }
+                }
                 break;
         }
+    }
+
+    private void runMainClient(String command) {
+        activity.mainClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                command, username.getText().toString(),
+                password.getText().toString());
     }
 
     public String getCurrentUserName() {

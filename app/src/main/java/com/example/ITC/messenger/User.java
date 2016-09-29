@@ -12,11 +12,9 @@ public class User {
     private String username = null;
     private String ip = null;
     public boolean hasNewMessage = false;
-    private Socket uSocket = null;
     public User (String username,String ip, Socket uSocket) {
         this.username = username;
         this.ip = ip;
-        this.uSocket = uSocket;
     }
 
     public String getUsername() {
@@ -29,10 +27,6 @@ public class User {
 
     public String getStringIp() {
         return ntoa(Long.parseLong(ip));
-    }
-
-    public Socket getuSocket() {
-        return this.uSocket;
     }
 
     private String ntoa(long raw) {

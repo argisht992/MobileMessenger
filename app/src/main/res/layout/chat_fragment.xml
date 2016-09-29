@@ -9,27 +9,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/username_size"
-        android:gravity="center"
-        />
+        android:gravity="center" />
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="390dp"
         android:layout_weight="0.65"
-        android:id="@+id/messages_list" />
+        android:id="@+id/messages_list"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"
+        android:divider="@null"/>
 
-    <EditText
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:id="@+id/editText"
-        android:layout_weight="0.1"
-        android:hint="Message..."/>
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/btn_send"
-        android:layout_gravity="right" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send"
+            android:id="@+id/btn_send"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"
+            android:hint="Message..."
+            android:layout_toLeftOf="@+id/btn_send"/>
+
+    </RelativeLayout>
 </LinearLayout>

@@ -1,21 +1,25 @@
 package com.example.ITC.messenger;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.PersistableBundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.text.style.EasyEditSpan;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ArrayAdapter;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ContainerActivity extends FragmentActivity implements ResultListener, DataUpdateListener {
+public class ContainerActivity extends AppCompatActivity implements ResultListener, DataUpdateListener {
     private Fragment loginFragment = null;
     public MainClient mainClient = null;
     private FragmentManager fm = null;
@@ -24,6 +28,8 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     ArrayList<String> onlineUserslist = null;
     private MessagesManager messagesManager = null;
     private String loginedUserName = null;
+    private Menu myMenu = null;
+    private EditText confirmPasswordText = null;
     ///
 
     @Override
@@ -32,11 +38,11 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
         setContentView(R.layout.container);
         mainClient = new MainClient(this);
         loginFragment = new LoginFragment();
+        //confirmPasswordText = (EditText) findViewById(R.id.confirm_password);
         adapter = new UsersListAdapter(ContainerActivity.this);
         fm = getSupportFragmentManager();
         Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-
         if (currentFragment != null) {
             fragmentTransaction.replace(R.id.fragment_container,currentFragment);
             fragmentTransaction.commit();
@@ -66,8 +72,11 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
                     Fragment usersListFragment = new UsersListFragment();
                     fragmentTransaction(usersListFragment);
                     new MessagingServer(ContainerActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    //create DB
                     messagesManager = new MessagesManager(ContainerActivity.this,loginedUserName);
+                } else {
+                    invalidCommand("Invalid Username/Password");
+                    mainClient.disconnect();
+                    Log.d("activity","disconnected");
                 }
 
             }
@@ -75,10 +84,26 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     }
 
     @Override
-    public void onResultRegister(boolean isSuccess) {
-
+    public void onResultRegister(final boolean isSuccess) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(isSuccess) {
+                    ((LoginFragment)loginFragment).confirmPasswordEditText.setVisibility(View.GONE);
+                    Toast.makeText(ContainerActivity.this,"Registration Successfully Complated",Toast.LENGTH_LONG).show();
+                } else {
+                    invalidCommand("Username already exists");
+                }
+            }
+        });
     }
 
+
+    public void invalidCommand(String command) {
+        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibe.vibrate(700);
+        Toast.makeText(ContainerActivity.this,command,Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void onLogout(boolean flag) {
@@ -116,6 +141,9 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
             fragmentTransaction.addToBackStack(null);
         } else if (endPoint instanceof UsersListFragment) {
             loginedUserName = ((LoginFragment)loginFragment).getCurrentUserName();
+            myMenu.setGroupVisible(0,true);
+        } else if (endPoint instanceof LoginFragment) {
+            myMenu.setGroupVisible(0,false);
         }
         fragmentTransaction.commit();
         fm.executePendingTransactions();
@@ -139,10 +167,38 @@ public class ContainerActivity extends FragmentActivity implements ResultListene
     @Override
     protected void onStop() {
         super.onStop();
-        mainClient.disconnect();
+//        mainClient.disconnect();
     }
 
     public Fragment getCurrentFragment() {
         return fm.findFragmentById(R.id.fragment_container);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.myMenu = menu;
+        menu.add(0,0,0,"Logout");
+        myMenu.setGroupVisible(0,false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                new MainClient(this).execute("logout", loginedUserName);
+                fragmentTransaction(loginFragment);
+                mainClient.disconnect();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    /*        */
+    public void newMessage(String userName) {
+        adapter.changeColor(userName);
+    }
+
+
 }
