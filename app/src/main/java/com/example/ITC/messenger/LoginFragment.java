@@ -77,9 +77,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     }
 
     private void runMainClient(String command) {
-        activity.mainClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                command, username.getText().toString(),
-                password.getText().toString());
+        String userName = username.getText().toString();
+        String passwd = password.getText().toString();
+        if (userName.isEmpty() || passwd.isEmpty()) {
+            activity.invalidCommand("Login/Password field(s) is empty");
+        } else {
+            activity.mainClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                    command, userName, passwd);
+        }
     }
 
     public String getCurrentUserName() {

@@ -29,81 +29,94 @@ public class MainClient extends AsyncTask<String, Void , Void> {
         this.ulst = (DataUpdateListener)context;
     }
 
-    public void connect() {
+    public boolean connect() {
         try {
             clientSocket = new Socket(InetAddress.getByName(ConstansContainer.SERVER_URL),ConstansContainer.SOCKET_PORT);
+           if (clientSocket != null) {
+               return true;
+           }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return false;
     }
 
     public void disconnect()
     {
         try {
-            clientSocket.close();
+            if (clientSocket != null) {
+                clientSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean login(String uName, String password)
-    {
+    public int login(String uName, String password) {
         char[] buffer = new char[1024];
-        connect();
         try {
-            writer = new PrintWriter(clientSocket.getOutputStream());
-            writer.write("login?" + uName + ";" + password);
-            writer.flush();
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            reader.read(buffer);
-            String buf = new String(buffer);
-            return buf.contains("YES");
+            if (connect()) {
+                writer = new PrintWriter(clientSocket.getOutputStream());
+                writer.write("login?" + uName + ";" + password);
+                writer.flush();
+                reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                reader.read(buffer);
+                String buf = new String(buffer);
+                return (buf.contains("YES"))?1:0;
+            } else {
+                return -1;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
-        }
-        catch (NullPointerException e) {
+            return -1;
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean register(String uName, String password)
-    {
-
-        char[] buffer = new char[1024];
-        connect();
-        try {
-            writer = new PrintWriter(clientSocket.getOutputStream());
-            writer.write("registration?" + uName + ";" + password);
-            writer.flush();
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            reader.read(buffer);
-            String buf = new String(buffer);
-            return buf.contains("YES");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            return -1;
         }
     }
 
-    public boolean logout(String userName)
+    public int register(String uName, String password)
+    {
+
+        char[] buffer = new char[1024];
+        try {
+            if (connect()) {
+                writer = new PrintWriter(clientSocket.getOutputStream());
+                writer.write("registration?" + uName + ";" + password);
+                writer.flush();
+                reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                reader.read(buffer);
+                String buf = new String(buffer);
+                return (buf.contains("YES"))?1:0;
+            } else {
+                return -1;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public int logout(String userName)
     {
         char[] buffer = new char[1024];
-        connect();
         try {
-            writer = new PrintWriter(clientSocket.getOutputStream());
-            writer.write("logout?" + userName);
-            writer.flush();
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            reader.read(buffer);
-            return buffer.toString().contains("YES");
+            if (connect()) {
+                writer = new PrintWriter(clientSocket.getOutputStream());
+                writer.write("logout?" + userName);
+                writer.flush();
+                reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                reader.read(buffer);
+                return (new String(buffer).contains("YES"))?1:0;
+            } else {
+                return -1;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
 
@@ -169,7 +182,7 @@ public class MainClient extends AsyncTask<String, Void , Void> {
     protected Void doInBackground(String... params) {
         switch (params[0]) {
             case "login":
-                boolean loginResult = login(params[1], params[2]);
+                int loginResult = login(params[1], params[2]);
                 lst.onResultLogin(loginResult);
                 break;
             case "registration":

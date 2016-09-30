@@ -29,8 +29,7 @@ public class ContainerActivity extends AppCompatActivity implements ResultListen
     private MessagesManager messagesManager = null;
     private String loginedUserName = null;
     private Menu myMenu = null;
-    private EditText confirmPasswordText = null;
-    ///
+    private boolean isLoginedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ public class ContainerActivity extends AppCompatActivity implements ResultListen
         setContentView(R.layout.container);
         mainClient = new MainClient(this);
         loginFragment = new LoginFragment();
-        //confirmPasswordText = (EditText) findViewById(R.id.confirm_password);
         adapter = new UsersListAdapter(ContainerActivity.this);
         fm = getSupportFragmentManager();
         Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
@@ -64,19 +62,26 @@ public class ContainerActivity extends AppCompatActivity implements ResultListen
     }
 
     @Override
-    public void onResultLogin(final boolean isSuccess) {
+    public void onResultLogin(final int isSuccess) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isSuccess) {
-                    Fragment usersListFragment = new UsersListFragment();
-                    fragmentTransaction(usersListFragment);
-                    new MessagingServer(ContainerActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    messagesManager = new MessagesManager(ContainerActivity.this,loginedUserName);
-                } else {
-                    invalidCommand("Invalid Username/Password");
-                    mainClient.disconnect();
-                    Log.d("activity","disconnected");
+                switch (isSuccess) {
+                    case 1:
+                        Fragment usersListFragment = new UsersListFragment();
+                        fragmentTransaction(usersListFragment);
+                        new MessagingServer(ContainerActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        messagesManager = new MessagesManager(ContainerActivity.this,loginedUserName);
+                        isLoginedIn = true;
+                        break;
+                    case 0:
+                        invalidCommand("Invalid Username/Password");
+                        mainClient.disconnect();
+                        Log.d("activity","disconnected");
+                        break;
+                    case -1:
+                        invalidCommand("Connection Error");
+                        break;
                 }
 
             }
@@ -84,15 +89,21 @@ public class ContainerActivity extends AppCompatActivity implements ResultListen
     }
 
     @Override
-    public void onResultRegister(final boolean isSuccess) {
+    public void onResultRegister(final int isSuccess) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(isSuccess) {
-                    ((LoginFragment)loginFragment).confirmPasswordEditText.setVisibility(View.GONE);
-                    Toast.makeText(ContainerActivity.this,"Registration Successfully Complated",Toast.LENGTH_LONG).show();
-                } else {
-                    invalidCommand("Username already exists");
+                switch (isSuccess) {
+                    case 1:
+                        ((LoginFragment)loginFragment).confirmPasswordEditText.setVisibility(View.GONE);
+                        Toast.makeText(ContainerActivity.this,"Registration Successfully Complated",Toast.LENGTH_LONG).show();
+                        break;
+                    case 0:
+                        invalidCommand("Username already exists");
+                        break;
+                    case -1:
+                        invalidCommand("Connection Error");
+                        break;
                 }
             }
         });
@@ -106,8 +117,18 @@ public class ContainerActivity extends AppCompatActivity implements ResultListen
     }
 
     @Override
-    public void onLogout(boolean flag) {
-
+    public void onLogout(final int isSuccess) {
+        switch (isSuccess) {
+            case 1:
+                isLoginedIn = false;
+                break;
+            case 0:
+                isLoginedIn = true;
+                break;
+            case -1:
+                isLoginedIn = true;
+                break;
+        }
     }
 
     @Override
@@ -200,5 +221,8 @@ public class ContainerActivity extends AppCompatActivity implements ResultListen
         adapter.changeColor(userName);
     }
 
+    public boolean isLoginedIn() {
+        return this.isLoginedIn;
+    }
 
 }

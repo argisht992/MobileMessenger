@@ -38,6 +38,9 @@ public class MessagesManager {
     public synchronized MessageModel addNewMessage(String msg, String userName,int sendByMe) {
         Calendar c = Calendar.getInstance();
         Date date = c.getTime();
+        if(msg.trim().toString().isEmpty()) {
+            return null;
+        }
         MessageModel m = new MessageModel(userName,msg,date.toString(),sendByMe);
         dbHelper.insertData(m,db);
         return m;
