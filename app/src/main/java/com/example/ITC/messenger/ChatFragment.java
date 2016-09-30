@@ -56,8 +56,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener,View.
 
     @Override
     public void onClick(View v) {
-        if (!editText.getText().toString().isEmpty()) {
-            client.sendMessage(editText.getText().toString());
+        String m= editText.getText().toString().trim();
+        if (!m.isEmpty()) {
+            client.sendMessage(m);
             editText.setText("");
         }
     }
